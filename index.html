@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101c32">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tutu Fixed">
+<title>Tutu Fixed — Путешествия</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap');
+:root{
+ --bg:#f3f6fb;--surface:#fff;--surface2:#edf2f9;--text:#17243b;
+ --muted:#78869d;--line:#e5eaf2;--primary:#2364e8;--accent:#ffca45;
+ --shadow:0 8px 28px #1a315010;--radius:22px;
+}
+[data-theme="dark"]{
+ --bg:#0c1423;--surface:#152137;--surface2:#1c2b43;
+ --text:#f1f5ff;--muted:#9aabc4;--line:#293950;
+ --primary:#6394ff;--shadow:0 8px 28px #0003;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Golos Text',sans-serif;padding-bottom:100px;transition:background .2s,color .2s}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:760px;margin:auto;min-height:100vh}
+header{padding:calc(18px + env(safe-area-inset-top)) 20px 20px;background:linear-gradient(135deg,#101c32,#1e3d70);color:white;border-radius:0 0 28px 28px}
+.top{display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:43px;height:43px;border-radius:14px;background:#ffca45;display:grid;place-items:center;color:#13223a}
+.logo svg{width:27px;height:27px}
+.brand-name{font-size:21px;font-weight:800;letter-spacing:-.7px}
+.brand-name span{color:#ffca45}
+.brand-sub{font-size:11px;color:#b9c9e3;margin-top:2px}
+.icon-btn{width:43px;height:43px;border:1px solid #ffffff30;background:#ffffff12;color:white;border-radius:15px;display:grid;place-items:center}
+.icon-btn svg{width:21px;height:21px}
+.welcome{margin-top:25px}
+.welcome h1{font-size:25px;line-height:1.2;margin:0 0 7px}
+.welcome p{font-size:13px;color:#c1d0e7;margin:0}
+main{padding:20px 16px;max-width:760px;margin:auto}
+.page{display:none}.page.active{display:block}
+.section-title{font-size:19px;font-weight:800;margin:4px 3px 15px}
+.search-card,.panel,.ticket,.history-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.search-card{padding:17px}
+.field-label{font-size:11px;color:var(--muted);font-weight:700;margin:0 0 7px 3px;display:block}
+.route-box{position:relative}
+.field{width:100%;height:53px;border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:14px;padding:0 14px;outline:none}
+.field:focus{border-color:var(--primary)}
+.route-field{margin-bottom:11px}
+.swap{position:absolute;right:13px;top:42px;width:34px;height:34px;border-radius:11px;border:2px solid var(--surface);background:var(--primary);color:white;display:grid;place-items:center;z-index:2}
+.swap svg{width:18px;height:18px}
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px}
+.primary-btn{border:0;background:var(--primary);color:white;border-radius:15px;min-height:52px;padding:0 18px;font-weight:800;width:100%;margin-top:15px;box-shadow:0 7px 18px #2364e82a}
+.primary-btn:active{transform:scale(.985)}
+.secondary-btn{border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:12px;padding:11px 14px;font-weight:700}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
+.chip{white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:30px;padding:9px 14px;font-size:12px;font-weight:700}
+.chip.active{background:var(--primary);border-color:var(--primary);color:white}
+.results-head{display:flex;justify-content:space-between;align-items:center;margin:20px 3px 12px}
+.results-head strong{font-size:16px}
+.results-head span{font-size:11px;color:var(--muted)}
+.trip{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:11px;box-shadow:var(--shadow)}
+.trip-top{display:flex;justify-content:space-between;align-items:center}
+.transport{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:700}
+.transport-icon{width:35px;height:35px;background:var(--surface2);border-radius:12px;display:grid;place-items:center;color:var(--primary)}
+.transport-icon svg{width:20px;height:20px}
+.price{font-size:19px;font-weight:800}
+.trip-route{display:grid;grid-template-columns:1fr 36px 1fr;align-items:center;margin:19px 0 13px}
+.time{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.city{font-size:12px;color:var(--muted);margin-top:3px}
+.route-line{height:1px;background:var(--line);position:relative}
+.route-line:after{content:"";position:absolute;left:50%;top:-3px;width:7px;height:7px;border-radius:50%;background:var(--primary)}
+.trip-bottom{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:12px;gap:8px}
+.trip-info{font-size:11px;color:var(--muted)}
+.small-btn{border:0;background:var(--primary);color:white;padding:10px 14px;border-radius:11px;font-size:12px;font-weight:800}
+.notice{font-size:11px;color:var(--muted);line-height:1.5;padding:13px 4px}
+.empty{padding:34px 18px;text-align:center;color:var(--muted)}
+.empty-icon{width:54px;height:54px;margin:0 auto 13px;background:var(--surface2);border-radius:18px;display:grid;place-items:center;color:var(--primary)}
+.empty-icon svg{width:27px;height:27px}
+.empty strong{display:block;color:var(--text);font-size:15px;margin-bottom:6px}
+.empty p{font-size:12px;line-height:1.5;margin:0}
+.panel{padding:17px;margin-bottom:13px}
+.panel-title{font-weight:800;font-size:15px;margin-bottom:13px}
+.ticket,.history-card{padding:16px;margin-bottom:12px}
+.ticket-route{font-weight:800;font-size:16px;margin:12px 0 6px}
+.ticket-meta{font-size:12px;color:var(--muted);line-height:1.8}
+.status{display:inline-flex;padding:6px 9px;border-radius:8px;background:#e4f7ed;color:#18834b;font-size:10px;font-weight:800}
+[data-theme="dark"] .status{background:#173c32;color:#7ce0ae}
+.status.past{background:var(--surface2);color:var(--muted)}
+.ticket-actions{display:flex;gap:8px;margin-top:13px}
+.ticket-actions button{flex:1}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding:9px 7px calc(9px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);max-width:760px;margin:auto}
+.nav-btn{border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:5px 0}
+.nav-btn svg{width:22px;height:22px}
+.nav-btn.active{color:var(--primary)}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.settings-row:last-child{border:0}
+.setting-left{display:flex;align-items:center;gap:11px}
+.setting-icon{width:38px;height:38px;border-radius:12px;background:var(--surface2);color:var(--primary);display:grid;place-items:center}
+.setting-icon svg{width:19px;height:19px}
+.setting-name{font-size:13px;font-weight:700}
+.setting-desc{font-size:10px;color:var(--muted);margin-top:3px}
+.settings-row select{max-width:130px;border:1px solid var(--line);background:var(--surface2);color:var(--text);padding:9px;border-radius:10px}
+.switch{width:45px;height:26px;border:0;border-radius:30px;background:var(--line);padding:3px}
+.switch:after{content:"";display:block;width:20px;height:20px;border-radius:50%;background:white;transition:.2s}
+.switch.on{background:var(--primary)}
+.switch.on:after{transform:translateX(19px)}
+.modal-bg{position:fixed;inset:0;background:#07132699;z-index:40;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:var(--surface);width:100%;max-width:600px;border-radius:25px 25px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));max-height:85vh;overflow:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}
+.modal-head strong{font-size:18px}
+.close{border:0;background:var(--surface2);color:var(--text);width:35px;height:35px;border-radius:11px;font-size:20px}
+.modal .field{margin-bottom:12px}
+.toast{position:fixed;bottom:95px;left:50%;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:#17243b;color:white;padding:12px 17px;border-radius:13px;font-size:12px;z-index:60;transition:.25s;max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:650px){main{padding:25px}.search-card{padding:23px}.trip{padding:19px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="top">
+  <div class="brand">
+   <div class="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+     <path d="M5 19h14M7 16l-2 3m12-3 2 3M7 4h10a2 2 0 0 1 2 2v7a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a2 2 0 0 1 2-2Z"/>
+     <path d="M8 8h8M8 12h.01M16 12h.01"/>
+    </svg>
+   </div>
+   <div><div class="brand-name">Tutu <span>Fixed</span></div><div class="brand-sub">ТВОИ ПОЕЗДКИ — В ОДНОМ МЕСТЕ</div></div>
+  </div>
+  <button class="icon-btn" onclick="openProfile()" aria-label="Профиль">
+   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+  </button>
+ </div>
+ <div class="welcome"><h1 id="greeting">Куда отправимся?</h1><p>Найди маршрут и сохрани свою поездку</p></div>
+</header>
+
+<main>
+<section class="page active" id="page-search">
+ <div class="section-title">Поиск поездки</div>
+ <div class="search-card">
+  <label class="field-label">ОТКУДА</label>
+  <div class="route-box">
+   <select class="field route-field" id="from"></select>
+   <button class="swap" onclick="swapCities()" aria-label="Поменять города">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h13m-4-4 4 4-4 4M17 17H4m4-4-4 4 4 4"/></svg>
+   </button>
+  </div>
+  <label class="field-label">КУДА</label>
+  <select class="field" id="to"></select>
+  <div class="date-row">
+   <div><label class="field-label">ДАТА</label><input class="field" type="date" id="date"></div>
+   <div><label class="field-label">ПАССАЖИРЫ</label><select class="field" id="people"><option>1 пассажир</option><option>2 пассажира</option><option>3 пассажира</option><option>4 пассажира</option></select></div>
+  </div>
+  <button class="primary-btn" onclick="searchTrips()">Найти поездку</button>
+ </div>
+
+ <div class="section-title" style="margin-top:24px">Транспорт</div>
+ <div class="chips" id="modes">
+  <button class="chip active" data-mode="all">Весь транспорт</button>
+  <button class="chip" data-mode="train">Поезда</button>
+  <button class="chip" data-mode="bus">Автобусы</button>
+  <button class="chip" data-mode="plane">Самолёты</button>
+ </div>
+ <div class="results-head"><strong>Варианты маршрута</strong><span id="result-count">Ожидают поиска</span></div>
+ <div id="results">
+  <div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg></div><strong>Начни с поиска</strong><p>Выбери города и дату, чтобы увидеть варианты поездок</p></div>
+ </div>
+ <div class="notice">Демонстрационное расписание и цены. Реальные билеты, бронирование и оплата не подключены.</div>
+</section>
+
+<section class="page" id="page-tickets">
+ <div class="section-title">Мои билеты</div>
+ <div id="upcoming"></div>
+</section>
+
+<section class="page" id="page-history">
+ <div class="section-title">История поездок</div>
+ <div id="history"></div>
+</section>
+
+<section class="page" id="page-settings">
+ <div class="section-title">Настройки</div>
+ <div class="panel">
+  <div class="panel-title">Внешний вид</div>
+  <div class="settings-row">
+   <div class="setting-left"><div class="setting-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18Z"/></svg></div><div><div class="setting-name">Тема приложения</div><div class="setting-desc">Светлая или тёмная</div></div></div>
+   <select id="themeSelect" onchange="setTheme(this.value)"><option value="system">Системная</option><option value="light">Светлая</option><option value="dark">Тёмная</option></select>
+  </div>
+  <div class="settings-row">
+   <div class="setting-left"><div class="setting-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v10m-5-5h10"/></svg></div><div><div class="setting-name">Уменьшить анимации</div><div class="setting-desc">Меньше визуальных эффектов</div></div></div>
+   <button class="switch" id="motionSwitch" onclick="toggleMotion()"></button>
+  </div>
+ </div>
+ <div class="panel">
+  <div class="panel-title">Аккаунт</div>
+  <div id="accountInfo"></div>
+  <button class="secondary-btn" style="width:100%;margin-top:10px" onclick="openProfile()">Открыть профиль</button>
+ </div>
+ <div class="panel">
+  <div class="panel-title">Приложение</div>
+  <div class="settings-row"><div><div class="setting-name">Tutu Fixed</div><div class="setting-desc">Релиз 2.0</div></div><span style="color:var(--primary);font-size:12px;font-weight:800">2.0.0</span></div>
+  <div class="settings-row"><div><div class="setting-name">Локальное хранение</div><div class="setting-desc">Данные остаются на устройстве</div></div><span style="color:#26945d;font-size:11px">Активно</span></div>
+  <p class="notice">Tutu Fixed — демонстрационное приложение. Сведения о маршрутах и стоимости поездок не являются реальным расписанием перевозчиков.</p>
+  <button class="secondary-btn" style="width:100%;color:#d44b55" onclick="resetApp()">Сбросить настройки приложения</button>
+ </div>
+</section>
+</main>
+
+<nav class="bottom-nav">
+ <button class="nav-btn active" data-page="search" onclick="navigate('search')">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>Поиск
+ </button>
+ <button class="nav-btn" data-page="tickets" onclick="navigate('tickets')">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4V6Z"/><path d="M12 6v2m0 4v2m0 4v0"/></svg>Билеты
+ </button>
+ <button class="nav-btn" data-page="history" onclick="navigate('history')">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5m4-1v5l3 2"/></svg>История
+ </button>
+ <button class="nav-btn" data-page="settings" onclick="navigate('settings')">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.5.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.5-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.8l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.5-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.5.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.8Z"/></svg>Настройки
+ </button>
+</nav>
+</div>
+
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+ <div class="modal"><div class="modal-head"><strong id="modalTitle">Профиль</strong><button class="close" onclick="closeModal()">×</button></div><div id="modalContent"></div></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
+const save=(key,value)=>localStorage.setItem(key,JSON.stringify(value));
+let settings=read('tf_settings',{theme:'system',motion:false});
+let user=read('tf_user',null);
+let tickets=read('tf_tickets',[]);
+let currentMode='all';
+let trips=[];
+
+const cities=['Москва','Санкт-Петербург','Псков','Великие Луки','Тверь','Казань','Нижний Новгород','Сочи','Екатеринбург','Новосибирск','Калининград'];
+const modes={
+ train:{name:'Поезд',speed:75,rate:2.2,icon:'train'},
+ bus:{name:'Автобус',speed:55,rate:1.5,icon:'bus'},
+ plane:{name:'Самолёт',speed:600,rate:7.5,icon:'plane'}
+};
+const icons={
+ train:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="16" rx="3"/><path d="M8 7h8M8 12h.01M16 12h.01M8 19l-2 3m10-3 2 3M5 16h14"/></svg>',
+ bus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 17V6a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v11H5Z"/><path d="M5 11h14M8 7h8M8 17v2m8-2v2"/><circle cx="8" cy="17" r="1"/><circle cx="16" cy="17" r="1"/></svg>',
+ plane:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 18-7-7 18-3-8-8-3Z"/><path d="m11 14 5-5"/></svg>'
+};
+
+function localDate(d=new Date()){
+ const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+ return `${y}-${m}-${day}`;
+}
+function dateTime(date,time){
+ const [y,m,d]=date.split('-').map(Number);
+ const [h,min]=time.split(':').map(Number);
+ return new Date(y,m-1,d,h,min).getTime();
+}
+function toast(message){
+ const el=$('toast');el.textContent=message;el.classList.add('show');
+ clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.classList.remove('show'),2600);
+}
+function applySettings(){
+ let theme=settings.theme||'system';
+ if(theme==='system')theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+ document.documentElement.dataset.theme=theme;
+ $('themeSelect').value=settings.theme||'system';
+ $('motionSwitch').classList.toggle('on',!!settings.motion);
+ document.documentElement.style.scrollBehavior=settings.motion?'auto':'smooth';
+}
+function setTheme(value){settings.theme=value;save('tf_settings',settings);applySettings()}
+function toggleMotion(){settings.motion=!settings.motion;save('tf_settings',settings);applySettings()}
+function initCities(){
+ $('from').innerHTML=cities.map(c=>`<option>${c}</option>`).join('');
+ $('to').innerHTML=cities.map(c=>`<option>${c}</option>`).join('');
+ $('from').value='Москва';$('to').value='Санкт-Петербург';
+ $('date').min=localDate();$('date').value=localDate();
+}
+function swapCities(){
+ const a=$('from').value;$('from').value=$('to').value;$('to').value=a;
+}
+function navigate(page){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ $('page-'+page).classList.add('active');
+ document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+ if(page==='tickets')renderTickets();
+ if(page==='history')renderHistory();
+ if(page==='settings')renderAccountInfo();
+ window.scrollTo({top:0,behavior:settings.motion?'auto':'smooth'});
+}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{
+ currentMode=b.dataset.mode;
+ document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));
+ renderTrips();
+}));
+function searchTrips(){
+ const from=$('from').value,to=$('to').value,date=$('date').value;
+ if(from===to){toast('Выбери разные города');return}
+ if(!date){toast('Укажи дату поездки');return}
+ if(date<localDate()){toast('Выбери сегодняшнюю или будущую дату');return}
+ const seed=from.length*13+to.length*7+Number(date.replaceAll('-',''))%97;
+ const distance=250+((seed*31)%1700);
+ trips=[];
+ Object.keys(modes).forEach((mode,index)=>{
+  for(let i=0;i<3;i++){
+   const m=modes[mode];
+   const duration=Math.max(1,Math.round(distance/m.speed*(i===0?1:i===1?1.2:1.45)));
+   const depHour=(6+((seed+i*5+index*3)%15))%24;
+   const depMin=(seed*7+i*20)%60;
+   const dep=`${String(depHour).padStart(2,'0')}:${String(depMin).padStart(2,'0')}`;
+   const arrival=new Date(2000,0,1,depHour,depMin+duration*60);
+   const arr=`${String(arrival.getHours()).padStart(2,'0')}:${String(arrival.getMinutes()).padStart(2,'0')}`;
+   trips.push({
+    id:`${mode}-${i}-${seed}`,from,to,date,mode,dep,arr,duration,
+    price:Math.round(distance*m.rate*(1+i*.16)/10)*10+100,
+    operator:mode==='train'?['Fixed Rail','Северный экспресс','Городские линии'][i]:mode==='bus'?['Fixed Bus','Межгород','Экспресс Лайн'][i]:['Fixed Air','Sky Route','Nord Air'][i]
+   });
+  }
+ });
+ renderTrips();toast('Варианты маршрута найдены');
+}
+function renderTrips(){
+ const filtered=trips.filter(t=>currentMode==='all'||t.mode===currentMode).sort((a,b)=>a.price-b.price);
+ $('result-count').textContent=filtered.length?`${filtered.length} вариантов`:'Нет вариантов';
+ $('results').innerHTML=filtered.length?filtered.map(t=>`
+ <article class="trip">
+  <div class="trip-top"><div class="transport"><div class="transport-icon">${icons[t.mode]}</div><div>${modes[t.mode].name}<div style="font-size:10px;font-weight:400;margin-top:3px">${t.operator}</div></div></div><div class="price">${t.price.toLocaleString('ru-RU')} ₽</div></div>
+  <div class="trip-route"><div><div class="time">${t.dep}</div><div class="city">${t.from}</div></div><div class="route-line"></div><div style="text-align:right"><div class="time">${t.arr}</div><div class="city">${t.to}</div></div></div>
+  <div class="trip-bottom"><div class="trip-info">${t.duration} ч в пути · ${formatDate(t.date)}</div><button class="small-btn" onclick="saveTrip('${t.id}')">Выбрать</button></div>
+ </article>`).join(''):`<div class="empty"><strong>Ничего не найдено</strong><p>Попробуй другой вид транспорта</p></div>`;
+}
+function formatDate(date){
+ return new Date(date+'T12:00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+}
+function saveTrip(id){
+ const t=trips.find(x=>x.id===id);if(!t)return;
+ if(!user){openProfile('Для сохранения поездки сначала укажи имя');return}
+ const ticket={
+  id:'TF-'+Date.now().toString(36).toUpperCase(),
+  from:t.from,to:t.to,date:t.date,dep:t.dep,mode:t.mode,
+  code:t.operator,seat:'Не назначено',price:t.price
+ };
+ tickets.push(ticket);save('tf_tickets',tickets);
+ toast('Демо-поездка сохранена в «Билетах»');
+}
+function isPast(t){return dateTime(t.date,t.dep)<Date.now()}
+function renderTickets(){
+ const upcoming=tickets.filter(t=>!isPast(t));
+ $('upcoming').innerHTML=upcoming.length?upcoming.map(t=>ticketHTML(t,false)).join(''):`<div class="panel empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v4a2 2 0 0 0 0 4v4H4v-4a2 2 0 0 0 0-4V6Z"/></svg></div><strong>Пока нет билетов</strong><p>Сохрани поездку через поиск — она появится здесь</p><button class="secondary-btn" style="margin-top:15px" onclick="navigate('search')">Перейти к поиску</button></div>`;
+}
+function renderHistory(){
+ const past=tickets.filter(isPast).sort((a,b)=>dateTime(b.date,b.dep)-dateTime(a.date,a.dep));
+ $('history').innerHTML=past.length?past.map(t=>ticketHTML(t,true)).join(''):`<div class="panel empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><strong>История пока пуста</strong><p>Завершённые поездки автоматически появятся здесь после наступления даты и времени отправления</p></div>`;
+}
+function ticketHTML(t,past){
+ const mode=modes[t.mode]?t.mode:'train';
+ return `<article class="${past?'history-card':'ticket'}">
+  <div style="display:flex;justify-content:space-between;align-items:center"><div class="transport"><div class="transport-icon">${icons[mode]}</div>${modes[mode].name}</div><span class="status ${past?'past':''}">${past?'Поездка завершена':'Предстоящая поездка'}</span></div>
+  <div class="ticket-route">${escapeHTML(t.from)} → ${escapeHTML(t.to)}</div>
+  <div class="ticket-meta">Дата: ${formatDate(t.date)} · ${escapeHTML(t.dep)}<br>Перевозчик: ${escapeHTML(t.code||'Fixed')}<br>Стоимость: ${Number(t.price||0).toLocaleString('ru-RU')} ₽<br>Код записи: ${escapeHTML(t.id)}</div>
+  <div class="ticket-actions">${past?`<button class="secondary-btn" onclick="repeatTrip('${t.id}')">Повторить поиск</button>`:`<button class="secondary-btn" onclick="cancelTicket('${t.id}')">Удалить запись</button>`}</div>
+ </article>`;
+}
+function escapeHTML(value){
+ return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function repeatTrip(id){
+ const t=tickets.find(x=>x.id===id);if(!t)return;
+ $('from').value=t.from;$('to').value=t.to;
+ const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+ $('date').value=localDate(tomorrow);
+ navigate('search');searchTrips();
+}
+function cancelTicket(id){
+ if(!confirm('Удалить эту запись из списка билетов?'))return;
+ tickets=tickets.filter(t=>t.id!==id);save('tf_tickets',tickets);
+ renderTickets();toast('Запись удалена');
+}
+function openProfile(message=''){
+ $('modalTitle').textContent='Профиль';
+ $('modalContent').innerHTML=user?`
+ <div class="panel" style="box-shadow:none"><div style="font-size:18px;font-weight:800">${escapeHTML(user.name||'Пользователь')}</div><div class="ticket-meta">Локальный профиль Tutu Fixed</div></div>
+ <button class="secondary-btn" style="width:100%" onclick="logout()">Выйти из профиля</button>`:`
+ ${message?`<p style="font-size:12px;color:var(--muted)">${escapeHTML(message)}</p>`:''}
+ <label class="field-label">ТВОЁ ИМЯ</label>
+ <input class="field" id="profileName" placeholder="Например, Алексей" maxlength="40">
+ <button class="primary-btn" onclick="login()">Создать локальный профиль</button>
+ <p class="notice">Профиль хранится только на этом устройстве. Регистрация через сервер не используется.</p>`;
+ $('modalBg').classList.add('show');
+}
+function login(){
+ const name=$('profileName').value.trim();
+ if(!name){toast('Введи имя');return}
+ user={name};save('tf_user',user);closeModal();renderAccountInfo();updateGreeting();toast('Профиль создан');
+}
+function logout(){
+ if(!confirm('Выйти из профиля? Сохранённые поездки останутся на устройстве.'))return;
+ user=null;localStorage.removeItem('tf_user');closeModal();renderAccountInfo();updateGreeting();toast('Вы вышли из профиля');
+}
+function renderAccountInfo(){
+ $('accountInfo').innerHTML=user?`<div class="setting-name">${escapeHTML(user.name)}</div><div class="setting-desc">Локальный профиль активен</div>`:`<div class="setting-name">Гость</div><div class="setting-desc">Войди в профиль, чтобы отображать своё имя</div>`;
+}
+function updateGreeting(){
+ $('greeting').textContent=user?`Привет, ${user.name}!`:'Куда отправимся?';
+}
+function closeModal(){$('modalBg').classList.remove('show')}
+function resetApp(){
+ if(!confirm('Сбросить настройки и тему? Сохранённые билеты и профиль останутся.'))return;
+ settings={theme:'system',motion:false};save('tf_settings',settings);applySettings();toast('Настройки сброшены');
+}
+initCities();applySettings();renderAccountInfo();updateGreeting();
+renderTickets();renderHistory();
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
+
